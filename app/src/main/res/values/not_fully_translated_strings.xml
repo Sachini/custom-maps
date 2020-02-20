@@ -25,4 +25,7 @@
 
     <!-- Tiepoint activity -->
     <string name="map_mode">Map mode</string>
+
+    <string name="start_record">Start</string>
+    <string name="stop_record">Stop</string>
 </resources>

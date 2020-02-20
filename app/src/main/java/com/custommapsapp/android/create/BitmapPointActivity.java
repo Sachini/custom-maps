@@ -213,6 +213,7 @@ public class BitmapPointActivity extends AppCompatActivity {
 
   private void returnSelectedPoint(PointF bitmapPoint) {
     Point intPoint = new Point(Math.round(bitmapPoint.x), Math.round(bitmapPoint.y));
+    Toast.makeText(this, String.format("Selected point (%d %d)", intPoint.x, intPoint.y), Toast.LENGTH_LONG).show();
     int snippetSize = MapEditor.SNIPPET_SIZE;
     byte[] mapSnippet = ImageHelper.createPngSample(image, intPoint, snippetSize, orientation);
     Point snippetPoint = new Point();

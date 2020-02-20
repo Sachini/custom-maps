@@ -183,6 +183,15 @@ public class DisplayState {
     return geoToImage.convertImageToGeoCoordinates(location);
   }
 
+  public float[] getScreenCenterImageLocation() {
+    float[] location = imageToScreen.getScreenCenterCoordinates(null);
+    if (location == null) {
+      return null;
+    }
+    // Convert screen center into image coordinates
+    return imageToScreen.convertScreenToImageCoordinates(location);
+  }
+
   public float[] getMapCenterGeoLocation(float[] result) {
     return geoToImage.getMapCenterGeoLocation(result);
   }
@@ -230,5 +239,12 @@ public class DisplayState {
       return null;
     }
     return geoToImage.convertImageToGeoCoordinates(location);
+  }
+
+  public float[] convertScreenToImageCoordinates(float[] location) {
+    if (imageToScreen.convertScreenToImageCoordinates(location) == null) {
+      return null;
+    }
+    return imageToScreen.convertScreenToImageCoordinates(location);
   }
 }

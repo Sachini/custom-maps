@@ -51,6 +51,8 @@ public abstract class MapDisplay extends View {
   protected View overlay;
   protected Linguist linguist;
 
+  public String map_name;
+
   public MapDisplay(Context context) {
     super(context);
   }
@@ -158,6 +160,10 @@ public abstract class MapDisplay extends View {
     if (overlay != null) {
       overlay.invalidate();
     }
+  }
+
+  public float[] getSelectedPointInImage() {
+    return displayState.getScreenCenterImageLocation();
   }
 
   // --------------------------------------------------------------------------
@@ -277,6 +283,7 @@ public abstract class MapDisplay extends View {
     if (map == null) {
       return null;
     }
+    map_name = map.getName();
     KmlInfo data = map.getKmlInfo();
     // Verify that file still exists
     if (!data.getFile().exists()) {

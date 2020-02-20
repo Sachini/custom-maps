@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Custom Maps</string>
+    <string name="select_map_name">Select map</string>
+    <string name="edit_prefs_name">Preferences</string>
+
+    <!-- CustomMaps.java -->
+    <string name="gps_not_available">
+        GPS location is not available to this app.
+        \nPlease allow this app to access GPS location to improve location accuracy.
+    </string>
+    <string name="location_not_available">
+        Your location is not available to this app.
+        \nPlease enable access to GPS or network location in system settings.
+    </string>
+    <string name="gps_outside_map">GPS location is not within map boundaries</string>
+    <string name="share_map_failed">Failed to send the map</string>
+    <string name="external_content_failed">Custom Maps failed to display the KMZ content.</string>
+    <string name="waiting_for_gps">Current location unknown.\nSearching for GPS signal…</string>
+    <string name="map_too_large">The selected map could not be loaded as it was too large.</string>
+
+    <!-- sharing -->
+    <string name="share_message_subject">I would like to share a map with you</string>
+    <string name="share_chooser_title">Send map with…</string>
+
+    <!-- select map -->
+    <string name="select_map_to_use">Select map to use</string>
+    <string name="no_maps_found_on_sd">
+        No maps found on SD card in CustomMaps folder.\n\nUse menu to create maps and to get help
+        finding them.\n\nOr press \'back\' to exit.
+    </string>
+    <string name="create_map_help">
+        Use menu to select from available maps.\n\nTap and hold a map
+        name to share or delete it.
+    </string>
+    <string name="no_map_sharing_apps">There are no installed apps that can share maps</string>
+    <string name="delete_map_dialog_title">Confirm deletion</string>
+    <string name="delete_map_dialog">Are you sure you want to delete map\n\"%s\"?</string>
+    <string name="delete_map_dialog_positive">Yes - delete</string>
+    <string name="delete_map_dialog_negative">No - keep map</string>
+    <string name="deleting_map_failed">Failed to delete map \"%s\"</string>
+    <string name="local_maps">Local Maps</string>
+    <string name="nearby_maps">Nearby Maps</string>
+    <string name="other_maps">Other Maps</string>
+    <string name="all_maps">All Maps</string>
+    <string name="select_cannot_modify_map_set">
+        This map is part of a map set. It cannot be modified or deleted.
+    </string>
+
+    <!-- map image display -->
+    <string name="unnamed_map">Untitled map</string>
+    <string name="map_image_load_failed">Failed to load map image for %s.</string>
+
+    <!-- help manager -->
+    <string name="help_menu_title">Help</string>
+    <string name="help_redisplay">You can redisplay this info using the menu</string>
+
+    <!-- details display -->
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="altitude">Altitude</string>
+    <string name="heading">Heading</string>
+    <string name="speed">Speed</string>
+    <string name="accuracy">Accuracy</string>
+    <string name="no_data_available">N/A</string>
+
+    <!-- edit preferences -->
+    <string name="metric_title">Use metric units</string>
+    <string name="metric_use_metric">Now using metric units</string>
+    <string name="metric_use_english">Now using English units</string>
+    <string name="distance_title">Display distance</string>
+    <string name="distance_show">Displays distance from user location to center of screen</string>
+    <string name="distance_hide">Distance is not displayed or computed</string>
+    <string name="heading_title">Display heading</string>
+    <string name="heading_show">Displays heading from user location to center of screen</string>
+    <string name="heading_hide">Heading is not displayed or computed</string>
+    <string name="language_title">Select language</string>
+    <string name="language_default">Default</string>
+    <string name="language_selected_format">Using %s</string>
+    <string name="max_map_img_size_title">Maximum map image size</string>
+    <string name="max_map_img_size">%.1f megapixels</string>
+
+    <!-- button items -->
+    <string name="button_ok">OK</string>
+    <string name="button_close">Close</string>
+    <string name="button_accept_license">Accept License</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_save">Save</string>
+    <string name="button_add_point">Add point</string>
+    <string name="button_preview">Preview</string>
+    <string name="button_accept">Accept</string>
+
+    <!-- menu items -->
+    <string name="select_map">Select map</string>
+    <string name="my_location">My location</string>
+    <string name="location_details">Location details</string>
+    <string name="share_map">Share map</string>
+    <string name="settings">Preferences</string>
+    <string name="delete_map">Delete map</string>
+    <string name="select_point">Select point</string>
+    <string name="photos">Photos</string>
+    <string name="downloads">Downloads</string>
+    <string name="sdcard">SD card</string>
+    <string name="use_picker">Alternative selector</string>
+    <string name="zoom_in">Zoom in</string>
+    <string name="zoom_out">Zoom out</string>
+    <string name="menu">Menu</string>
+</resources>

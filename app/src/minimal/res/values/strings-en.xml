@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
+    <string name="en_app_name">Custom Maps</string>
+    <string name="en_select_map_name">Select map</string>
+    <string name="en_edit_prefs_name">Preferences</string>
+
+    <!-- CustomMaps.java -->
+    <string name="en_gps_not_available">
+        GPS location is not available to this app.
+        \nPlease allow this app to access GPS location to improve location accuracy.
+    </string>
+    <string name="en_location_not_available">
+        Your location is not available to this app.
+        \nPlease enable access to GPS or network location in system settings.
+    </string>
+    <string name="en_gps_outside_map">GPS location is not within map boundaries</string>
+    <string name="en_share_map_failed">Failed to send the map</string>
+    <string name="en_external_content_failed">Custom Maps failed to display the KMZ content.</string>
+    <string name="en_waiting_for_gps">Current location unknown.\nSearching for GPS signal…</string>
+    <string name="en_map_too_large">The selected map could not be loaded as it was too large.</string>
+
+    <!-- sharing -->
+    <string name="en_share_message_subject">I would like to share a map with you</string>
+    <string name="en_share_chooser_title">Send map with…</string>
+
+    <!-- select map -->
+    <string name="en_select_map_to_use">Select map to use</string>
+    <string name="en_no_maps_found_on_sd">
+        No maps found on SD card in CustomMaps folder.\n\nUse menu to create maps and to get help
+        finding them.\n\nOr press \'back\' to exit.
+    </string>
+    <string name="en_create_map_help">
+        Use menu to select from available maps.\n\nTap and hold a map name to select or delete it.
+    </string>
+    <string name="en_no_map_sharing_apps">There are no installed apps that can share maps</string>
+    <string name="en_delete_map_dialog_title">Confirm deletion</string>
+    <string name="en_delete_map_dialog">Are you sure you want to delete map\n\"%s\"?</string>
+    <string name="en_delete_map_dialog_positive">Yes - delete</string>
+    <string name="en_delete_map_dialog_negative">No - keep map</string>
+    <string name="en_deleting_map_failed">Failed to delete map \"%s\"</string>
+    <string name="en_local_maps">Local Maps</string>
+    <string name="en_nearby_maps">Nearby Maps</string>
+    <string name="en_other_maps">Other Maps</string>
+    <string name="en_all_maps">All Maps</string>
+    <string name="en_select_cannot_modify_map_set">
+        This map is part of a map set. It cannot be modified or deleted.
+    </string>
+
+    <!-- map image display -->
+    <string name="en_unnamed_map">Untitled map</string>
+    <string name="en_map_image_load_failed">Failed to load map image for %s.</string>
+
+    <!-- help manager -->
+    <string name="en_help_menu_title">Help</string>
+    <string name="en_help_redisplay">You can redisplay this info using the menu</string>
+
+    <!-- details display -->
+    <string name="en_latitude">Latitude</string>
+    <string name="en_longitude">Longitude</string>
+    <string name="en_altitude">Altitude</string>
+    <string name="en_heading">Heading</string>
+    <string name="en_speed">Speed</string>
+    <string name="en_accuracy">Accuracy</string>
+    <string name="en_no_data_available">N/A</string>
+
+    <!-- edit preferences -->
+    <string name="en_metric_title">Use metric units</string>
+    <string name="en_metric_use_metric">Now using metric units</string>
+    <string name="en_metric_use_english">Now using English units</string>
+    <string name="en_distance_title">Display distance</string>
+    <string name="en_distance_show">Displays distance from user location to center of screen</string>
+    <string name="en_distance_hide">Distance is not displayed or computed</string>
+    <string name="en_heading_title">Display heading</string>
+    <string name="en_heading_show">Displays heading from user location to center of screen</string>
+    <string name="en_heading_hide">Heading is not displayed or computed</string>
+    <string name="en_language_title">Select language</string>
+    <string name="en_language_default">Default</string>
+    <string name="en_language_selected_format">Using %s</string>
+    <string name="en_max_map_img_size_title">Maximum map image size</string>
+    <string name="en_max_map_img_size">%.1f megapixels</string>
+    <string name="en_about_custom_maps">About Custom Maps</string>
+
+    <!-- button items -->
+    <string name="en_button_ok">OK</string>
+    <string name="en_button_close">Close</string>
+    <string name="en_button_accept_license">Accept License</string>
+    <string name="en_button_cancel">Cancel</string>
+    <string name="en_button_save">Save</string>
+    <string name="en_button_add_point">Add point</string>
+    <string name="en_button_preview">Preview</string>
+    <string name="en_button_accept">Accept</string>
+
+    <!-- menu items -->
+    <string name="en_select_map">Select map</string>
+    <string name="en_my_location">My location</string>
+    <string name="en_location_details">Location details</string>
+    <string name="en_share_map">Share map</string>
+    <string name="en_select_point">Select point</string>
+    <string name="en_settings">Preferences</string>
+    <string name="en_delete_map">Delete map</string>
+    <string name="en_photos">Photos</string>
+    <string name="en_downloads">Downloads</string>
+    <string name="en_sdcard">SD card</string>
+    <string name="en_use_picker">Alternative selector</string>
+    <string name="en_zoom_in">Zoom in</string>
+    <string name="en_zoom_out">Zoom out</string>
+    <string name="en_menu">Menu</string>
+
+    <string name="en_argb_8888_summary_off">Using 16-bit color (allows largest map image size). But app crashes on some Motorola devices.</string>
+    <string name="en_argb_8888_summary_on">Using 32-bit color (may limit maximum map image size).</string>
+    <string name="en_argb_8888_title">Use 32-bit color</string>
+    <string name="en_max_map_img_size_gpu_on">4096x4096 (16 megapixels) or 2048x2048 (4 megapixels)</string>
+    <string name="en_use_gpu_summary_off">Using software rendering (allows largest map image size). But app crashes on some LG devices.</string>
+    <string name="en_use_gpu_summary_on">Using GPU rendering (reduces maximum map image size).</string>
+    <string name="en_use_gpu_title">Use GPU rendering</string>
+</resources>

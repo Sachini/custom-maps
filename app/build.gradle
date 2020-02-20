@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "com.custommapsapp.android"
         // Min version: 19 - KitKat (4.4), excludes 3.5% of devices
-        minSdkVersion 19
+        minSdkVersion 23
         // Target: 28 - Pie (9.0)
         targetSdkVersion 28
 
@@ -27,6 +27,27 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+    }
+
+    flavorDimensions "type"
+
+    productFlavors {
+        developer {
+            dimension "type"
+            applicationId "com.custommapsapp.android.developer"
+//            manifest.srcFile "src/developer/AndroidManifest.xml"
+        }
+        minimal {
+            dimension "type"
+            applicationId "com.custommapsapp.android.minimal"
+//            manifest.srcFile "src/minimal/AndroidManifest.xml"
+        }
+    }
+    sourceSets {
+        developer.java.srcDir 'src/main/java'
+        minimal.java.srcDir 'src/main/java'
+        minimal.res.srcDir 'src/main/res'
+        developer.res.srcDir 'src/main/res'
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

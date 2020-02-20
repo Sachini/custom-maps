@@ -23,7 +23,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.custommapsapp.android.CustomMaps;
 
 /**
  * Linguist class provides translation support to Activities, Fragments, and Views. Each supported
@@ -66,36 +65,13 @@ public class Linguist {
       language = null;
     } else {
       switch (languageCode.toLowerCase()) {
-        case "de":
-          language = new De_German();
-          break;
         case "en":
           language = new En_English();
           break;
-        case "fi":
-          language = new Fi_Finnish();
-          break;
-        case "hr":
-          language = new Hr_Croatian();
-          break;
-        case "hu":
-          language = new Hu_Hungarian();
-          break;
-        case "it":
-          language = new It_Italian();
-          break;
-        case "pl":
-          language = new Pl_Polish();
-          break;
-        case "ro":
-          language = new Ro_Romanian();
-          break;
-        case "ru":
-          language = new Ru_Russian();
-          break;
         default:
           // Do not change language
-          Log.w(CustomMaps.LOG_TAG, "Unsupported language code: " + languageCode);
+          language = new En_English();
+//          Log.w(CustomMaps.LOG_TAG, "Unsupported language code: " + languageCode);
           break;
       }
     }

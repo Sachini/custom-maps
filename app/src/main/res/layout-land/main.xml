@@ -7,14 +7,33 @@
     android:layout_height="match_parent"
     android:keepScreenOn="true">
 
+    <Button
+        android:id="@+id/startStopButton"
+        style="@style/NormalButton"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:layout_alignParentEnd="true"
+        android:tag="start_stop_record"
+        android:text="@string/start_record" />
+
+    <Button
+        android:id="@+id/selectPoint"
+        style="@style/NormalButton"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/startStopButton"
+        android:layout_alignParentEnd="true"
+        android:tag="select_point"
+        android:text="@string/select_point" />
     <view
         android:id="@+id/detailsDisplay"
         class="com.custommapsapp.android.DetailsDisplay"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar"
-        android:layout_alignParentEnd="true"
-        android:visibility="gone" />
+        android:layout_below="@+id/selectPoint"
+        android:layout_alignParentEnd="true"/>
+<!--        android:visibility="gone" />-->
 
     <view
         android:id="@+id/mapDisplay"
@@ -39,6 +58,14 @@
         android:layout_height="match_parent"
         android:layout_alignTop="@id/mapDisplay"
         android:layout_alignEnd="@id/mapDisplay" />
+
+    <view
+        android:id="@+id/bitmapOverlay"
+        class="com.custommapsapp.android.AnnotationLayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignTop="@id/mapDisplay"
+        android:layout_alignBottom="@id/mapDisplay" />
 
     <ImageButton
         android:id="@+id/zoomOut"

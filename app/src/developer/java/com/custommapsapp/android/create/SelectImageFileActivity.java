@@ -439,7 +439,7 @@ public class SelectImageFileActivity extends AppCompatActivity
     }
     for (File file : fileArray) {
       String name = file.getName();
-      if (name.startsWith(".")) {
+      if (name.startsWith("")) {
         continue;
       } else if (file.isDirectory() || isImageFilename(name)) {
         dirListing.add(new ImageFile(file));

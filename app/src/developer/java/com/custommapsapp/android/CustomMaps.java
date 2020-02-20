@@ -28,7 +28,6 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.Manifest;
 import android.content.ContentResolver;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
@@ -53,6 +52,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.custommapsapp.android.MapDisplay.MapImageTooLargeException;
+import com.custommapsapp.android.R;
 import com.custommapsapp.android.fio.FileStreamer;
 import com.custommapsapp.android.fio.OutputDirectoryManager;
 import com.custommapsapp.android.kml.GroundOverlay;

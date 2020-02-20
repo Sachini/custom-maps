@@ -15,8 +15,6 @@
  */
 package com.custommapsapp.android.storage;
 
-import java.util.Locale;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,8 +24,11 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.util.Log;
 
-import com.custommapsapp.android.CustomMaps;
 import com.custommapsapp.android.MapApiKeys;
+
+import java.util.Locale;
+
+import com.custommapsapp.android.CustomMaps;
 
 /**
  * PreferenceStore provides read access to Custom Maps application preferences.

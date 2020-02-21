@@ -47,7 +47,7 @@ public class AnnotationLayer extends View {
     blackPaint = new Paint();
     blackPaint.setAntiAlias(true);
     blackPaint.setStyle(Paint.Style.STROKE);
-    blackPaint.setColor(0xB0000000);
+    blackPaint.setColor(0xB0FF0000);
     blackPaint.setStrokeWidth(getResources().getDimension(R.dimen.inner_line_width));
     whitePaint = new Paint(blackPaint);
     whitePaint.setColor(0x80FFFFFF);

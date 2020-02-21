@@ -5,7 +5,6 @@ android {
     buildToolsVersion "28.0.3"
 
     defaultConfig {
-        applicationId "com.custommapsapp.android"
         // Min version: 19 - KitKat (4.4), excludes 3.5% of devices
         minSdkVersion 23
         // Target: 28 - Pie (9.0)

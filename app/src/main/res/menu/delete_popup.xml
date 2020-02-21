@@ -1,0 +1,12 @@
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/deleteRecord"
+        android:icon="@drawable/ic_delete_black_24dp"
+        android:title="@string/delete_last_record"/>
+    <item
+        android:id="@+id/deleteSession"
+        android:icon="@drawable/ic_delete_forever_black_24dp"
+        android:title="@string/delete_entire_session"/>
+</menu>

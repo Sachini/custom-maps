@@ -51,6 +51,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -136,6 +137,7 @@ public class CustomMaps extends AppCompatActivity {
 
     private Button selectPoint;
     private Button startStopButton;
+    private ImageButton deleteOptionsButton;
     private AtomicBoolean isRecording = new AtomicBoolean(false);
     private FileStreamer mFileStreamer;
     OutputDirectoryManager mStreamFolder;
@@ -231,13 +233,15 @@ public class CustomMaps extends AppCompatActivity {
         selectPoint = findViewById(R.id.selectPoint);
         startStopButton = findViewById((R.id.startStopButton));
         selectPoint.setOnClickListener(v -> saveSelectedPoint());
-        startStopButton.setOnClickListener(v->startStopRecording());
+        startStopButton.setOnClickListener(v -> startStopRecording());
+        deleteOptionsButton = findViewById(R.id.deletePopUpBtn);
+        deleteOptionsButton.setOnClickListener(v->showDeleteOptions(v));
         mLabelInterfaceTime = findViewById(R.id.timerTxt);
-        if(isRecording.get()){
-          startStopButton.setText(R.string.stop_record);
-          selectPoint.setEnabled(true);
-          mLabelInterfaceTime.setVisibility(View.VISIBLE);
-        }else{
+        if (isRecording.get()) {
+            startStopButton.setText(R.string.stop_record);
+            selectPoint.setEnabled(true);
+            mLabelInterfaceTime.setVisibility(View.VISIBLE);
+        } else {
             startStopButton.setText(R.string.start_record);
             selectPoint.setEnabled(false);
             mLabelInterfaceTime.setVisibility(View.GONE);
@@ -510,6 +514,58 @@ public class CustomMaps extends AppCompatActivity {
         return true;
     }
 
+    private void showDeleteOptions(View v){
+        PopupMenu popup = new PopupMenu(this, deleteOptionsButton);
+        //Inflating the Popup using xml file
+        popup.getMenuInflater().inflate(R.menu.delete_popup, popup.getMenu());
+
+        //registering popup with OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()){
+                case R.id.deleteRecord:
+                    deleteLastRecord();
+                    break;
+                case R.id.deleteSession:
+                    deleteThisSession();
+                    break;
+                default:
+                    return false;
+            }
+            return true;
+        });
+
+        popup.show();//showing popup menu
+    }
+
+    private void deleteLastRecord(){
+        if(isRecording.get()){
+            try {
+                mFileStreamer.addRecord(WRITER_TAG, "\tDELETE");
+            } catch (IOException | KeyException e) {
+                Log.d(LOG_TAG, "onSensorChanged: Something is wrong.");
+                e.printStackTrace();
+            }
+        }else{
+            displayUserMessage("No active session");
+        }
+    }
+
+    private void deleteThisSession(){
+        if(isRecording.get()){
+            try {
+                mFileStreamer.addRecord(WRITER_TAG, "\nCANCEL SESSION");
+            } catch (IOException | KeyException e) {
+                Log.d(LOG_TAG, "onSensorChanged: Something is wrong.");
+                e.printStackTrace();
+            }finally {
+                stopRecording();
+                displayUserMessage("Cancelled entire session");
+            }
+        }else{
+            displayUserMessage("No active session");
+        }
+    }
+
     private void centerUserLocation() {
         if (!mapDisplay.centerOnGpsLocation()) {
             displayUserMessage(linguist.getString(R.string.gps_outside_map));
@@ -706,15 +762,15 @@ public class CustomMaps extends AppCompatActivity {
         displayUserMessage(linguist.getString(R.string.map_too_large));
     }
 
-    public void startStopRecording(){
-        if(isRecording.get()) {
+    public void startStopRecording() {
+        if (isRecording.get()) {
             stopRecording();
-        }else {
+        } else {
             startRecording();
         }
     }
 
-    private void startRecording(){
+    private void startRecording() {
         isRecording.set(true);
         startStopButton.setText(R.string.stop_record);
         selectPoint.setEnabled(true);
@@ -731,9 +787,11 @@ public class CustomMaps extends AppCompatActivity {
         mInterfaceTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if(start_time.get() < 0){return;}
+                if (start_time.get() < 0) {
+                    return;
+                }
                 Intent timerInfoIntent = new Intent(TIME_INFO);
-                long input = (SystemClock.elapsedRealtimeNanos() - start_time.get())/NANO_TO_SEC;
+                long input = (SystemClock.elapsedRealtimeNanos() - start_time.get()) / NANO_TO_SEC;
                 // extract hour, minute, second information from second
                 long hours = input / 3600;
                 input = input % 3600;
@@ -748,7 +806,7 @@ public class CustomMaps extends AppCompatActivity {
 
     }
 
-    private void stopRecording(){
+    private void stopRecording() {
         isRecording.set(false);
         startStopButton.setText(R.string.start_record);
         selectPoint.setEnabled(false);
@@ -767,6 +825,7 @@ public class CustomMaps extends AppCompatActivity {
         float[] geoPoint = mapDisplay.getScreenCenterGeoLocation();
         try {
             StringBuilder str = new StringBuilder();
+            str.append('\n');
             str.append(mapDisplay.map_name.replace(' ', '_'));
             str.append('\t');
             str.append(SystemClock.elapsedRealtimeNanos());
@@ -778,7 +837,7 @@ public class CustomMaps extends AppCompatActivity {
             str.append(geoPoint[0]);
             str.append('\t');
             str.append(geoPoint[1]);
-            str.append('\n');
+//            str.append('\n');
             mFileStreamer.addRecord(WRITER_TAG, str.toString());
         } catch (IOException | KeyException e) {
             Log.d(LOG_TAG, "onSensorChanged: Something is wrong.");

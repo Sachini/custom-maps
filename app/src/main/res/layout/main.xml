@@ -29,6 +29,17 @@
         android:textAllCaps="true"
         android:textSize="18sp" />
 
+    <ImageButton
+        android:id="@+id/deletePopUpBtn"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@id/selectPoint"
+        android:layout_marginRight="20dp"
+        android:tag='delete_options'
+        android:src="@drawable/ic_delete_black_24dp"
+        android:contentDescription="@string/delete_options" />
+
     <Button
         android:id="@+id/selectPoint"
         style="@style/NormalButton"

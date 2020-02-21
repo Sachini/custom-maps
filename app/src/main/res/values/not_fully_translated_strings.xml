@@ -28,4 +28,8 @@
 
     <string name="start_record">Start</string>
     <string name="stop_record">Stop</string>
+
+    <string name="delete_options">Delete</string>
+    <string name="delete_last_record">Delete last record</string>
+    <string name="delete_entire_session">Delete Session</string>
 </resources>

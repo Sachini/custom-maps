@@ -53,6 +53,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -143,6 +144,7 @@ public class CustomMaps extends AppCompatActivity {
 
     private Button selectPoint;
     private Button startStopButton;
+    private ImageButton deleteOptionsButton;
     private AtomicBoolean isRecording = new AtomicBoolean(false);
     private FileStreamer mFileStreamer;
     OutputDirectoryManager mStreamFolder;
@@ -245,7 +247,9 @@ public class CustomMaps extends AppCompatActivity {
         selectPoint = findViewById(R.id.selectPoint);
         startStopButton = findViewById((R.id.startStopButton));
         selectPoint.setOnClickListener(v -> saveSelectedPoint());
-        startStopButton.setOnClickListener(v->startStopRecording());
+        startStopButton.setOnClickListener(v -> startStopRecording());
+        deleteOptionsButton = findViewById(R.id.deletePopUpBtn);
+        deleteOptionsButton.setOnClickListener(v->showDeleteOptions(v));
         mLabelInterfaceTime = findViewById(R.id.timerTxt);
         if(isRecording.get()){
           startStopButton.setText(R.string.stop_record);
@@ -545,6 +549,58 @@ public class CustomMaps extends AppCompatActivity {
                 return false;
         }
         return true;
+    }
+
+    private void showDeleteOptions(View v){
+        PopupMenu popup = new PopupMenu(this, deleteOptionsButton);
+        //Inflating the Popup using xml file
+        popup.getMenuInflater().inflate(R.menu.delete_popup, popup.getMenu());
+
+        //registering popup with OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()){
+                case R.id.deleteRecord:
+                    deleteLastRecord();
+                    break;
+                case R.id.deleteSession:
+                    deleteThisSession();
+                    break;
+                default:
+                    return false;
+            }
+            return true;
+        });
+
+        popup.show();//showing popup menu
+    }
+
+    private void deleteLastRecord(){
+        if(isRecording.get()){
+            try {
+                mFileStreamer.addRecord(WRITER_TAG, "\tDELETE");
+            } catch (IOException | KeyException e) {
+                Log.d(LOG_TAG, "onSensorChanged: Something is wrong.");
+                e.printStackTrace();
+            }
+        }else{
+            displayUserMessage("No active session");
+        }
+    }
+
+    private void deleteThisSession(){
+        if(isRecording.get()){
+            try {
+                mFileStreamer.addRecord(WRITER_TAG, "\nCANCEL SESSION");
+            } catch (IOException | KeyException e) {
+                Log.d(LOG_TAG, "onSensorChanged: Something is wrong.");
+                e.printStackTrace();
+            }finally {
+                stopRecording();
+                displayUserMessage("Cancelled entire session");
+            }
+        }else{
+            displayUserMessage("No active session");
+        }
     }
 
     private void centerUserLocation() {
@@ -878,6 +934,7 @@ public class CustomMaps extends AppCompatActivity {
         float[] geoPoint = mapDisplay.getScreenCenterGeoLocation();
         try {
             StringBuilder str = new StringBuilder();
+            str.append('\n');
             str.append(mapDisplay.map_name.replace(' ', '_'));
             str.append('\t');
             str.append(SystemClock.elapsedRealtimeNanos());
@@ -889,7 +946,7 @@ public class CustomMaps extends AppCompatActivity {
             str.append(geoPoint[0]);
             str.append('\t');
             str.append(geoPoint[1]);
-            str.append('\n');
+//            str.append('\n');
             mFileStreamer.addRecord(WRITER_TAG, str.toString());
         } catch (IOException | KeyException e) {
             Log.d(LOG_TAG, "onSensorChanged: Something is wrong.");

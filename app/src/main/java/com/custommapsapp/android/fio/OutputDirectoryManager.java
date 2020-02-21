@@ -33,14 +33,12 @@ public class OutputDirectoryManager {
 
         // initialize folder name with current time information
         Calendar currentTime = Calendar.getInstance();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddhhmmss");
+//        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddhhmmss");
         File externalDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        String folderName = formatter.format(currentTime.getTime());
+//        String folderName = formatter.format(currentTime.getTime());
 
         // combine prefix and suffix
-        if (prefix != null) {
-            folderName = prefix + folderName;
-        }
+        String folderName = prefix;
         if (suffix != null) {
             folderName = folderName + suffix;
         }

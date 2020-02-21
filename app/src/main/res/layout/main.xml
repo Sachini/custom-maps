@@ -17,6 +17,18 @@
         android:tag="start_stop_record"
         android:text="@string/start_record" />
 
+    <TextView
+        android:id="@+id/timerTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@id/startStopButton"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="5dp"
+        android:text=""
+        android:textAllCaps="true"
+        android:textSize="18sp" />
+
     <Button
         android:id="@+id/selectPoint"
         style="@style/NormalButton"
@@ -97,33 +109,6 @@
         android:paddingEnd="10dp"
         android:paddingBottom="10dp"
         android:src="@drawable/zoomin" />
-
-<!--    <Button-->
-<!--        android:id="@+id/startStopButton"-->
-<!--        style="@style/NormalButton"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignBottom="@id/mapDisplay"-->
-<!--        android:layout_marginStart="70dp"-->
-<!--        android:layout_marginBottom="5dp"-->
-<!--        android:paddingTop="5dp"-->
-<!--        android:paddingBottom="10dp"-->
-<!--        android:tag="start_stop_record"-->
-<!--        android:text="@string/start_record" />-->
-
-
-<!--    <Button-->
-<!--        android:id="@+id/selectPoint"-->
-<!--        style="@style/NormalButton"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignBottom="@id/mapDisplay"-->
-<!--        android:layout_marginStart="170dp"-->
-<!--        android:layout_marginBottom="6dp"-->
-<!--        android:paddingTop="5dp"-->
-<!--        android:paddingBottom="10dp"-->
-<!--        android:tag="select_point"-->
-<!--        android:text="@string/select_point" />-->
 
     <androidx.appcompat.widget.Toolbar
         android:id="@id/toolbar"

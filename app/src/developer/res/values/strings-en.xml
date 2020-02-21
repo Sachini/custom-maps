@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingTranslation">
-    <string name="en_app_name">Custom Maps</string>
+    <string name="en_app_name">Custom Maps Dev</string>
     <string name="en_select_map_name">Select map</string>
     <string name="en_create_map_name">Create map</string>
     <string name="en_edit_prefs_name">Preferences</string>

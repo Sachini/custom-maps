@@ -94,7 +94,7 @@
 
         <!-- FileProvider is needed to share map files -->
         <provider
-            android:authorities="com.custommapsapp.android.fileprovider"
+            android:authorities="${applicationId}.fileprovider"
             android:name="androidx.core.content.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">

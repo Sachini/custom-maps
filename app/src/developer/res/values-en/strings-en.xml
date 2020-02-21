@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Custom Maps</string>
+    <string name="app_name">Custom Maps Dev</string>
     <string name="select_map_name">Select map</string>
     <string name="create_map_name">Create map</string>
     <string name="edit_prefs_name">Preferences</string>

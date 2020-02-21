@@ -17,18 +17,23 @@ package com.custommapsapp.android;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.KeyException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -46,10 +51,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.custommapsapp.android.MapDisplay.MapImageTooLargeException;
 import com.custommapsapp.android.fio.FileStreamer;
@@ -73,6 +80,7 @@ import com.custommapsapp.android.storage.PreferenceStore;
  */
 public class CustomMaps extends AppCompatActivity {
     public static final String LOG_TAG = "Custom Maps";
+    public static final String TIME_INFO = "TimeInfo";
 
     private static final String PREFIX = "com.custommapsapp.android";
 
@@ -87,6 +95,7 @@ public class CustomMaps extends AppCompatActivity {
     private static final String SAVED_INSTANCESTATE = PREFIX + ".InstanceState";
 
     private static final String DOWNLOAD_URL_PREFIX = "http://www.custommapsapp.com/qr?";
+    private static final long NANO_TO_SEC = 1000000000;
 
     private OutputDirectoryManager outputDirectoryManager;
 
@@ -131,6 +140,11 @@ public class CustomMaps extends AppCompatActivity {
     private FileStreamer mFileStreamer;
     OutputDirectoryManager mStreamFolder;
 
+    private TextView mLabelInterfaceTime;
+    private AtomicLong start_time = new AtomicLong(-1);
+    private Timer mInterfaceTimer;
+    private TimerStatusReceiver timerReciever;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,7 +156,7 @@ public class CustomMaps extends AppCompatActivity {
                     WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
         }
         try {
-            mStreamFolder = new OutputDirectoryManager("map", "M");
+            mStreamFolder = new OutputDirectoryManager("mapLocalize");
         } catch (IOException e) {
             Log.d(LOG_TAG, "startRecording: Cannot create output folder.");
             e.printStackTrace();
@@ -157,7 +171,7 @@ public class CustomMaps extends AppCompatActivity {
             requestWindowFeature(Window.FEATURE_NO_TITLE);
         }
 
-
+        timerReciever = new TimerStatusReceiver();
         reloadUI();
     }
 
@@ -218,12 +232,15 @@ public class CustomMaps extends AppCompatActivity {
         startStopButton = findViewById((R.id.startStopButton));
         selectPoint.setOnClickListener(v -> saveSelectedPoint());
         startStopButton.setOnClickListener(v->startStopRecording());
+        mLabelInterfaceTime = findViewById(R.id.timerTxt);
         if(isRecording.get()){
           startStopButton.setText(R.string.stop_record);
           selectPoint.setEnabled(true);
+          mLabelInterfaceTime.setVisibility(View.VISIBLE);
         }else{
             startStopButton.setText(R.string.start_record);
             selectPoint.setEnabled(false);
+            mLabelInterfaceTime.setVisibility(View.GONE);
         }
     }
 
@@ -313,6 +330,8 @@ public class CustomMaps extends AppCompatActivity {
         visibility = (prefs.isShowDistance() ? View.VISIBLE : View.GONE);
         distanceLayer.setVisibility(visibility);
         distanceLayer.setShowHeading(prefs.isShowHeading());
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(timerReciever, new IntentFilter(TIME_INFO));
     }
 
     @Override
@@ -333,6 +352,7 @@ public class CustomMaps extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(timerReciever);
         loadMapForDisplay(null, null);
         super.onStop();
     }
@@ -688,26 +708,58 @@ public class CustomMaps extends AppCompatActivity {
 
     public void startStopRecording(){
         if(isRecording.get()) {
-            isRecording.set(false);
-            startStopButton.setText(R.string.start_record);
-            selectPoint.setEnabled(false);
-            try {
-                mFileStreamer.endFiles();
-            } catch (IOException e) {
-                e.printStackTrace();
+            stopRecording();
+        }else {
+            startRecording();
+        }
+    }
+
+    private void startRecording(){
+        isRecording.set(true);
+        startStopButton.setText(R.string.stop_record);
+        selectPoint.setEnabled(true);
+        try {
+            mFileStreamer = new FileStreamer(this, mStreamFolder.getOutputDirectory());
+            mFileStreamer.addFile(WRITER_TAG, String.format("location_%d.txt", SystemClock.elapsedRealtimeNanos()));
+        } catch (IOException e) {
+            Log.d(LOG_TAG, "startRecording: Cannot create output folder.");
+            e.printStackTrace();
+        }
+        start_time.set(SystemClock.elapsedRealtimeNanos());
+        mLabelInterfaceTime.setVisibility(View.VISIBLE);
+        mInterfaceTimer = new Timer();
+        mInterfaceTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if(start_time.get() < 0){return;}
+                Intent timerInfoIntent = new Intent(TIME_INFO);
+                long input = (SystemClock.elapsedRealtimeNanos() - start_time.get())/NANO_TO_SEC;
+                // extract hour, minute, second information from second
+                long hours = input / 3600;
+                input = input % 3600;
+                long mins = input / 60;
+                long secs = input % 60;
+
+                // return interface int time
+                timerInfoIntent.putExtra("VALUE", String.format(Locale.US, "%02d:%02d:%02d", hours, mins, secs));
+                LocalBroadcastManager.getInstance(CustomMaps.this).sendBroadcast(timerInfoIntent);
             }
-        }else{
-            isRecording.set(true);
-            startStopButton.setText(R.string.stop_record);
-            selectPoint.setEnabled(true);
-            try {
-                    mFileStreamer = new FileStreamer(this, mStreamFolder.getOutputDirectory());
-                    mFileStreamer.addFile(WRITER_TAG, String.format("location_%d.txt", SystemClock.elapsedRealtimeNanos()));
-                } catch (IOException e) {
-                    Log.d(LOG_TAG, "startRecording: Cannot create output folder.");
-                    e.printStackTrace();
-                }
-            }
+        }, 0, 1000);
+
+    }
+
+    private void stopRecording(){
+        isRecording.set(false);
+        startStopButton.setText(R.string.start_record);
+        selectPoint.setEnabled(false);
+        try {
+            mFileStreamer.endFiles();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mInterfaceTimer.cancel();
+        start_time.set(-1);
+        mLabelInterfaceTime.setVisibility(View.GONE);
     }
 
     public void saveSelectedPoint() {
@@ -828,6 +880,17 @@ public class CustomMaps extends AppCompatActivity {
             }
         }
         return result;
+    }
+
+    private class TimerStatusReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null && intent.getAction().equals(TIME_INFO)) {
+                if (intent.hasExtra("VALUE")) {
+                    mLabelInterfaceTime.setText(intent.getStringExtra("VALUE"));
+                }
+            }
+        }
     }
 
     private LocationManager locator;

@@ -3,13 +3,6 @@
     package="com.custommapsapp.android"
     android:versionCode="111"
     android:versionName="1.5.2">
-    <!-- Version released to Play Store: 1.5.2/111 (2019-9-30) -->
-    <!-- Target and min API versions now in build.gradle file
-         uses-sdk android:targetSdkVersion="28"
-                  android:minSdkVersion="19"                   -->
-<!--    <uses-permission android:name="android.permission.INTERNET" />-->
-<!--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
-<!--    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
 
     <application
         android:name="CustomMapsApp"
@@ -62,7 +55,7 @@
 
         <!-- FileProvider is needed to share map files -->
         <provider
-            android:authorities="com.custommapsapp.android.fileprovider"
+            android:authorities="${applicationId}.fileprovider"
             android:name="androidx.core.content.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">

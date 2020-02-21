@@ -74,7 +74,6 @@ public class SelectMap extends AppCompatActivity
   private static final String PERMISSION_TAG = "com.custommapsapp.android.PermissionFragmentTag";
 
   // Option menu and activity result constants
-  private static final int MENU_CREATE_MAP = 1;
   private static final int MENU_PREFERENCES = 2;
 
   private static final int EDIT_PREFERENCES = 2;

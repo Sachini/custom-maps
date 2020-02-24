@@ -18,7 +18,9 @@ package com.custommapsapp.android;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -776,7 +778,10 @@ public class CustomMaps extends AppCompatActivity {
         selectPoint.setEnabled(true);
         try {
             mFileStreamer = new FileStreamer(this, mStreamFolder.getOutputDirectory());
-            mFileStreamer.addFile(WRITER_TAG, String.format("location_%d.txt", SystemClock.elapsedRealtimeNanos()));
+            Calendar current_time = Calendar.getInstance();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddhhmmss");
+            String folder_name = formatter.format(current_time.getTime());
+            mFileStreamer.addFile(WRITER_TAG, String.format("location_%s.txt", folder_name));
         } catch (IOException e) {
             Log.d(LOG_TAG, "startRecording: Cannot create output folder.");
             e.printStackTrace();

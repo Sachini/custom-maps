@@ -32,6 +32,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -57,6 +58,10 @@ import com.custommapsapp.android.kml.KmlFolder;
 import com.custommapsapp.android.language.Linguist;
 import com.custommapsapp.android.storage.EditPreferences;
 import com.custommapsapp.android.storage.PreferenceStore;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 /**
  * SelectMap allows user to select a map to be displayed, or to launch CreateMap activity through
@@ -91,8 +96,9 @@ public class SelectMap extends AppCompatActivity
   private ListView mapList;
   private TextView noMapsFoundMessage;
 
-  private LocationManager locator;
-  private LocationTracker locationTracker;
+  private FusedLocationProviderClient locator;
+  private LocationRequest mLocationRequest;
+  private LocationTrackerFLP locationTracker;
   private boolean autoSelectRequested;
   private String localPathRequest;
 
@@ -133,6 +139,7 @@ public class SelectMap extends AppCompatActivity
     if (savedInstanceState != null) {
       helpDialogManager.onRestoreInstanceState(savedInstanceState);
     }
+    locator = LocationServices.getFusedLocationProviderClient(this);
   }
 
   @Override
@@ -176,7 +183,7 @@ public class SelectMap extends AppCompatActivity
     helpDialogManager.onPause();
     if (locationTracker != null) {
       locationTracker.setQuitting(true);
-      locator.removeUpdates(locationTracker);
+      locator.removeLocationUpdates(locationTracker);
     }
     if (mapCatalog != null) {
       mapCatalog.clearCatalog();
@@ -212,37 +219,19 @@ public class SelectMap extends AppCompatActivity
    */
   @SuppressLint("MissingPermission")
   private void initializeLocation() {
-    locator = (LocationManager) getSystemService(LOCATION_SERVICE);
-    locationTracker = new LocationTracker(getApplicationContext());
+    locationTracker = new LocationTrackerFLP(getApplicationContext());
 
-    // Some systems don't allow access to location providers despite manifest.xml
-    boolean hasGpsProvider = (locator.getProvider(LocationManager.GPS_PROVIDER) != null);
-    boolean hasNetworkProvider = (locator.getProvider(LocationManager.NETWORK_PROVIDER) != null);
-    // Use latest GPS location only if it is fresh enough
-    Location last = null;
-    if (hasGpsProvider) {
-      last = locator.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-      if (last != null && !isNewerThan(last.getTime(), OLDEST_OK_LOCATION_MS)) {
-        last = null;
-      }
-    }
-    // Use network location only if it is fresh enough and if GPS was not used
-    if (last == null && hasNetworkProvider) {
-      last = locator.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-      if (last != null && !isNewerThan(last.getTime(), OLDEST_OK_LOCATION_MS)) {
-        last = null;
-      }
-    }
-    if (last != null) {
-      locationTracker.onLocationChanged(last);
-    }
     locationTracker.setQuitting(false);
-    // Listen to location updates if they are available
-    if (hasGpsProvider) {
-      locator.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 1000, locationTracker);
-    }
-    if (hasNetworkProvider) {
-      locator.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 1000, locationTracker);
+    mLocationRequest = new LocationRequest();
+    mLocationRequest.setInterval(2000);
+    mLocationRequest.setFastestInterval(1000);
+    mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+    String message = null;
+    try {
+      locator.requestLocationUpdates(mLocationRequest, locationTracker, Looper.myLooper());
+    } catch (SecurityException e) {
+      message = "startSession: Error creating location service: " + e.getMessage();
     }
   }
 
@@ -600,7 +589,7 @@ public class SelectMap extends AppCompatActivity
     PreferenceStore.instance(this).setLastUsedMap(map.getName());
     getIntent().putExtra(SELECTED_MAP, mapHolder);
     setResult(RESULT_OK, getIntent());
-    locator.removeUpdates(locationTracker);
+    locator.removeLocationUpdates(locationTracker);
     mapCatalog.clearCatalog();
     finish();
   }

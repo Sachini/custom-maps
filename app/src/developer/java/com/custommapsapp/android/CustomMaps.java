@@ -15,23 +15,6 @@
  */
 package com.custommapsapp.android;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.KeyException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.xmlpull.v1.XmlPullParserException;
-
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -39,13 +22,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
@@ -76,6 +56,27 @@ import com.custommapsapp.android.kml.Placemark;
 import com.custommapsapp.android.language.Linguist;
 import com.custommapsapp.android.storage.EditPreferences;
 import com.custommapsapp.android.storage.PreferenceStore;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.KeyException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * CustomMaps is the main activity of the application. It displays a bitmap image tied to geo
@@ -1064,9 +1065,9 @@ public class CustomMaps extends AppCompatActivity {
         }
     }
 
-    private LocationManager locator;
-    private SensorManager sensors;
-    private LocationTracker locationTracker = new LocationTracker(null) {
+    private FusedLocationProviderClient locator;
+    private LocationRequest mLocationRequest;
+    private LocationTrackerFLP locationTracker = new LocationTrackerFLP(null) {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             // check valid location result

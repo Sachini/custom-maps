@@ -75,6 +75,12 @@ import com.custommapsapp.android.language.Linguist;
 import com.custommapsapp.android.storage.EditPreferences;
 import com.custommapsapp.android.storage.PreferenceStore;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import android.os.Looper;
+
 /**
  * CustomMaps is the main activity of the application. It displays a bitmap image tied to geo
  * coordinates and the user's location on it.
@@ -177,6 +183,7 @@ public class CustomMaps extends AppCompatActivity {
 
         timerReciever = new TimerStatusReceiver();
         reloadUI();
+        processLaunchIntent(savedInstanceState);
     }
 
     private void reloadUI() {
@@ -208,10 +215,7 @@ public class CustomMaps extends AppCompatActivity {
         mapDisplay.setOverlay(locationLayer);
 
         if (locator == null) {
-            locator = (LocationManager) getSystemService(LOCATION_SERVICE);
-        }
-        if (sensors == null) {
-            sensors = (SensorManager) getSystemService(SENSOR_SERVICE);
+            locator = LocationServices.getFusedLocationProviderClient(this);
         }
 
         if (zoomIn != null) {
@@ -302,33 +306,22 @@ public class CustomMaps extends AppCompatActivity {
         locationTracker.setContext(getApplicationContext());
         locationTracker.setDisplay(getWindowManager().getDefaultDisplay());
         locationTracker.setQuitting(false);
-        locationTracker.resetCompass();
 
         // Avoid crashing on some systems where location providers are disabled
         // This is possible on some open source Android variants.
-        boolean gpsAvailable = false;
-        if (locator.getProvider(LocationManager.GPS_PROVIDER) != null) {
-            locator.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0.0f, locationTracker);
-            gpsAvailable = true;
-        }
-        boolean locationAvailable = gpsAvailable;
-        if (locator.getProvider(LocationManager.NETWORK_PROVIDER) != null) {
-            locator.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30000, 0f, locationTracker);
-            locationAvailable = true;
-        }
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(2000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
         String message = null;
-        if (!gpsAvailable) {
-            message = linguist.getString(R.string.gps_not_available);
-            if (!locationAvailable) {
-                message = linguist.getString(R.string.location_not_available);
-            }
+        try {
+            locator.requestLocationUpdates(mLocationRequest, locationTracker, Looper.myLooper());
+        } catch (SecurityException e) {
+            message = "startSession: Error creating location service: " + e.getMessage();
         }
         locationLayer.setWarningMessage(message);
 
-        Sensor sensor = sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensors.registerListener(locationTracker, sensor, 50000);
-        sensor = sensors.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        sensors.registerListener(locationTracker, sensor, 50000);
         PreferenceStore prefs = PreferenceStore.instance(getApplicationContext());
         detailsDisplay.setUseMetric(prefs.isMetric());
         int visibility = (prefs.isShowDetails() ? View.VISIBLE : View.GONE);
@@ -350,8 +343,7 @@ public class CustomMaps extends AppCompatActivity {
     @Override
     protected void onPause() {
         locationTracker.setQuitting(true);
-        sensors.unregisterListener(locationTracker);
-        locator.removeUpdates(locationTracker);
+        locator.removeLocationUpdates(locationTracker);
         super.onPause();
         isLaunchingSelectMap = false;
     }
@@ -405,7 +397,7 @@ public class CustomMaps extends AppCompatActivity {
                 displayState.setFollowMode(inState.getBoolean(SAVED_FOLLOWMODE));
                 Location savedLocation = inState.getParcelable(SAVED_LOCATION);
                 if (savedLocation != null) {
-                    locationTracker.onLocationChanged(savedLocation);
+                    locationTracker.onLocationResult(savedLocation);
                 }
             } else {
                 // TODO: Do we need a failure message by error result from loadMap...()?
@@ -686,7 +678,7 @@ public class CustomMaps extends AppCompatActivity {
             // Start with last known location if it is fresher than 15 minutes
             long _15Minutes = 15 * 60 * 1000;
             Location location = getLastKnownLocation(_15Minutes);
-            locationTracker.onLocationChanged(location);
+            locationTracker.onLocationResult(location);
             if (location == null) {
                 displayUserMessage(linguist.getString(R.string.waiting_for_gps));
                 displayState.setFollowMode(true);
@@ -863,22 +855,8 @@ public class CustomMaps extends AppCompatActivity {
      */
     @SuppressWarnings("MissingPermission")
     private Location getLastKnownLocation(long maxAgeMs) {
-        long oldestAllowed = (maxAgeMs == 0 ? 0 : System.currentTimeMillis() - maxAgeMs);
-        Location lastKnown = null;
-        // Some Android versions can hide GPS and NETWORK location providers from
-        // apps: must check availability despite manifest requiring them :-(
-        if (locator.getProvider(LocationManager.GPS_PROVIDER) != null) {
-            lastKnown = locator.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        }
-        // Try to use network location if GPS wasn't available, or it was too old
-        if ((lastKnown == null || lastKnown.getTime() < oldestAllowed) &&
-                locator.getProvider(LocationManager.NETWORK_PROVIDER) != null) {
-            lastKnown = locator.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if (lastKnown != null && lastKnown.getTime() < oldestAllowed) {
-                lastKnown = null;
-            }
-        }
-        return lastKnown;
+//        long oldestAllowed = (maxAgeMs == 0 ? 0 : System.currentTimeMillis() - maxAgeMs);
+        return locationTracker.getCurrentLocation(null);
     }
 
     private void loadKmlFile() {
@@ -957,15 +935,18 @@ public class CustomMaps extends AppCompatActivity {
         }
     }
 
-    private LocationManager locator;
-    private SensorManager sensors;
-    private LocationTracker locationTracker = new LocationTracker(null) {
+    private FusedLocationProviderClient locator;
+    private LocationRequest mLocationRequest;
+    private LocationTrackerFLP locationTracker = new LocationTrackerFLP(null) {
         @Override
-        public void onLocationChanged(Location location) {
-            if (location == null) {
+        public void onLocationResult(LocationResult locationResult) {
+            // check valid location result
+            if (locationResult == null) {
                 return;
             }
-            super.onLocationChanged(location);
+            super.onLocationResult(locationResult);
+            List<Location> locationList = locationResult.getLocations();
+            Location location = locationList.get(locationList.size() - 1);
             // Get updated location w/ averaged speed and altitude to be passed to
             // mapDisplay
             getCurrentLocation(location);
@@ -977,18 +958,6 @@ public class CustomMaps extends AppCompatActivity {
             }
             if (detailsDisplay.isShown()) {
                 detailsDisplay.updateValues(location);
-            }
-        }
-
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            super.onSensorChanged(event);
-            if (isQuitting) {
-                return;
-            }
-            locationLayer.setHeading(compassHeading);
-            if (detailsDisplay.isShown()) {
-                detailsDisplay.setHeading(locationLayer.getHeading());
             }
         }
     };

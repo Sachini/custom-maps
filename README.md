@@ -3,13 +3,18 @@
 Manually mark current location on floorplans. 
 
 Adopted from Custom Maps by Marko Teittinen [https://github.com/markoteittinen/custom-maps]
+
 Modified to use Google FLP and record manually marked locations under `Downloads/mapLocalize` folder.
 
 The repository has two build variants:
-    - minimal - use existing map files (.kmz files copied to `CustomMaps` folder)  to manually mark locations
-              - does not require google api key
-    - developer - all functionality.
-                - can create maps from images that can be used by minimal version. The created .kmz files are saved in `CustomMaps`
+* minimal
+    * use existing map files (.kmz files copied to `CustomMaps` folder)  to manually mark locations
+    * does not require google api key
+* developer
+    * includes all functionality of minimal app.
+    * can create maps from images that can be used by minimal version. The created .kmz files are saved in `CustomMaps`
+    * require googl_api_key
+
 
 -------------------
 Custom Maps can use almost any map image as a GPS map. The map image can be provided in JPG, PNG, GIF, or PDF format.
